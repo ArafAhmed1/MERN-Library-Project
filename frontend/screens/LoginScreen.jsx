@@ -9,6 +9,7 @@ import { useLoginMutation } from '../src/slices/usersApiSlice.js';
 import { setCredentials } from '../src/slices/authSlice.js';
 import { toast } from 'react-toastify';
 import { setCurrentUserId } from '../globalUser.js';
+import '../src/styles/LoginScreen.css';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -38,63 +39,53 @@ const LoginScreen = () => {
       dispatch(setCredentials({ ...res }));
       navigate(redirect);
       const userId = res._id;
-      
+
       setCurrentUserId(userId);
-      console.log("User logged in:", userId);
-      // console.log(res);
+      console.log('User logged in:', userId);
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
   };
-  
-  return (
-    <FormContainer>
-      <h1>Sign In</h1>
 
-      <Form onSubmit={submitHandler}>
-        <Form.Group className='my-2' controlId='email'>
+  return (
+    <div className="form-container">
+      <Form className="login-form" onSubmit={submitHandler}>
+        <h1>Sign In</h1>
+
+        <Form.Group controlId="email">
           <Form.Label>Email Address</Form.Label>
           <Form.Control
-            type='email'
-            placeholder='Enter email'
+            type="email"
+            placeholder="Enter email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           ></Form.Control>
         </Form.Group>
 
-        <Form.Group className='my-2' controlId='password'>
+        <Form.Group controlId="password">
           <Form.Label>Password</Form.Label>
           <Form.Control
-            type='password'
-            placeholder='Enter password'
+            type="password"
+            placeholder="Enter password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           ></Form.Control>
         </Form.Group>
 
-        <Button disabled={isLoading} type='submit' variant='primary'>
-          Sign In
+        <Button disabled={isLoading} type="submit">
+          {isLoading ? <Loader size="sm" /> : 'Sign In'}
         </Button>
 
-        {isLoading && <Loader />}
+        <Row className="py-3">
+          <Col className="text-center">
+            New Customer?{' '}
+            <Link to={redirect ? `/register?redirect=${redirect}` : '/register'}>
+              Register
+            </Link>
+          </Col>
+        </Row>
       </Form>
-
-      <Row className='py-3'>
-        <Col>
-          New Customer?{' '}
-          <Link to={redirect ? `/register?redirect=${redirect}` : '/register'}>
-            Register
-          </Link>
-        </Col>
-      </Row>
-
-      {/* Add Forgot Password Link */}
-      <Row className='py-3'>
-        <Col>
-          <Link to='/forgot-password'>Forgot Password?</Link>
-        </Col>
-      </Row>
-    </FormContainer>
+    </div>
   );
 };
 
