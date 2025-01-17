@@ -1,5 +1,5 @@
 import { fetchBaseQuery, createApi } from '@reduxjs/toolkit/query/react';
-import { BASE_URL } from '../constants';
+import { BASE_URL } from '../../constants';
 
 import { logout } from './authSlice'; // Import the logout action
 
