@@ -15,27 +15,21 @@ import adminRoutes from './routes/adminRoutes.js'
 import borrowRequestRoutes from "./routes/borrowRequestRoutes.js";
 import borrowRoutes from "./routes/borrowRoutes.js";
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
-
+dotenv.config();
 const app = express();
 
 app.use(express.json());
 
 app.use(cors({
-  origin: 'https://librarywebapp-nlbi.onrender.com/', // Allow requests only from the frontend
+  origin: process.env.FRONTEND_URL,
   methods: ['GET', 'POST', 'DELETE', 'PUT'],
   credentials: true, // Allow sending cookies if needed
 }));
 
 
-dotenv.config();
 const port = process.env.PORT || 5000;
-// const port = 1516;
 connectDB();
 
-
-
-
-// app.use(cors());
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -61,21 +55,6 @@ app.get('/api', async (req, res) => {
   }
 });
 
-// app.get('/api/search', async (req, res) => {
-  //   try {
-//     const { query } = req.query;
-//     const books = await Book.find({
-//       $or: [
-//         { title: { $regex: query, $options: 'i' } },
-//         { author: { $regex: query, $options: 'i' } }
-//       ]
-//     }, 'title author coverImageLink');
-//     res.json(books);
-//   } catch (error) {
-//     console.error("Error searching books:", error);
-//     res.status(500).send({ message: "Server error", error: error.message });
-//   }
-// });
 
 
 app.get('/api/bookshelf', async (req, res) => {
@@ -124,19 +103,6 @@ app.get('/api/bookshelf/:id/details', async (req, res) => {
 });
 
 
-// app.get('/api/userDashboard', async (req, res) => {
-  //   try {
-//     // Get all users or just one user based on your needs
-//     const users = await User.find({}, { password: 0 }); // Exclude password field
-
-//     // Send the user details without password
-//     res.json(users);
-//   } catch (error) {
-//     console.error('Error fetching user details:', error);
-//     res.status(500).json({ message: 'Error fetching user details' });
-//   }
-// });
-
 
 app.get('/api/books/filter', async (req, res) => {
   try {
@@ -170,21 +136,6 @@ app.get('/api/books/dropdown-options', async (req, res) => {
   }
 });
 
-// app.delete('/users/:id', async (req, res) => {
-  //   try {
-    //     const userId = req.params.id;
-    //     const user = await User.findByIdAndDelete(userId); // Ensure you're using the correct database query
-
-    //     if (!user) {
-//       return res.status(404).json({ message: 'User not found' }); // Handle case where user doesn't exist
-//     }
-
-//     res.status(200).json({ message: 'User deleted successfully' }); // Respond with success message
-//   } catch (err) {
-//     console.error('Error deleting user:', err); // Log error for debugging
-//     res.status(500).json({ message: 'Failed to delete user', error: err.message }); // Return a detailed error message
-//   }
-// });
 
 app.post("/api/borrow", async (req, res) => {
   const { bookId, userId } = req.body;
@@ -200,9 +151,9 @@ app.post("/api/borrow", async (req, res) => {
     const user = await User.findById(userId);
 
     // Check if the user exists
-    // if (!user) {
-    //   return res.status(404).json({ message: "User not found." });
-    // }
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
 
     // Check if the user is banned
     if (user.isBanned) {
@@ -359,15 +310,6 @@ app.put('/api/users/change-password/:userId', async (req, res) => {
 
 //borrow history
 app.use("/api/borrow", borrowRoutes);
-
-// app.get('/api/borrowedBooks/overdue/:userId', async (req, res) => {
-  //   const { userId } = req.params;
-  
-//   // Example logic to fetch overdue books
-//   const overdueBooks = await BorrowedBook.find({ userId, returnDate: { $lt: new Date() }, returned: false });
-
-//   res.json(overdueBooks);
-// });
 
 
 //overdue book notification
@@ -628,10 +570,6 @@ app.post('/api/finished-reading', async (req, res) => {
 });
 
 
-
-
-
-
 //fetch user wishlist and finish reading book
 app.get("/api/users/:userId/books", async (req, res) => {
   const { userId } = req.params;
@@ -693,44 +631,29 @@ app.post("/api/finished-reading/remove", async (req, res) => {
   }
 });
 
-app.post("/api/finished-reading-timer", async (req, res) => {
-  const { bookId, userId } = req.body;
+// app.post("/api/finished-reading-timer", async (req, res) => {
+//   const { bookId, userId } = req.body;
 
-  try {
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
+//   try {
+//     const user = await User.findById(userId);
+//     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Check if the book is already marked as finished
-    const alreadyFinished = user.finishedBooks.some(
-      (entry) => entry.bookId.toString() === bookId
-    );
+//     // Check if the book is already marked as finished
+//     const alreadyFinished = user.finishedBooks.some(
+//       (entry) => entry.bookId.toString() === bookId
+//     );
 
-    if (!alreadyFinished) {
-      user.finishedBooks.push({ bookId });
-      await user.save();
-    }
+//     if (!alreadyFinished) {
+//       user.finishedBooks.push({ bookId });
+//       await user.save();
+//     }
 
-    res.json({ message: "Book marked as finished!" });
-  } catch (error) {
-    console.error("Error marking book as finished:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-
-
-// const __dirname = path.dirname(new URL(import.meta.url).pathname);
-
-// if (process.env.NODE_ENV === 'production') {
-//   app.use(express.static(path.join(__dirname, "frontend/dist")));
-//   app.get("*", (req, res) => {
-//     res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
-//   });
-// }
-// else {
-//   app.get("/", (req, res) => {
-//     res.send("API is running....");
-//   });
-// }
+//     res.json({ message: "Book marked as finished!" });
+//   } catch (error) {
+//     console.error("Error marking book as finished:", error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
 
 
 const __dirname = path.resolve();

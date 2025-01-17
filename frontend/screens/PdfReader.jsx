@@ -24,24 +24,6 @@ const PdfReader = () => {
     fetchBook();
   }, [id]);
 
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      if (!hasMarkedAsFinished) {
-        try {
-          await axios.post("/api/finished-reading-timer", {
-            bookId: id,
-            userId: getCurrentUserId(), // Fetch current user ID
-          });
-          setHasMarkedAsFinished(true); // Prevent duplicate marking
-          console.log("Book marked as finished!");
-        } catch (err) {
-          console.error("Error marking book as finished:", err);
-        }
-      }
-    }, 30000); // 30 seconds timer
-
-    return () => clearTimeout(timer); // Clear timer on unmount
-  }, [id, hasMarkedAsFinished]);
 
   const adjustIframeSize = () => {
     if (iframeRef.current) {
@@ -84,7 +66,6 @@ const PdfReader = () => {
 
   const handleFinishedReading = async () => {
     try {
-      // console.log(id,getCurrentUserId());
       const response = await axios.post("/api/finished-reading", {
         bookId: id,
         userId: getCurrentUserId(), // Fetch current user ID
