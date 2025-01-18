@@ -1,3 +1,4 @@
+# Library Web App
 1. Install npm (npm install) in the root folder and in frontend folder using the terminal.
 2. Change the values of example.env to suit your case and rename it to .env
 3. Change the value of "BASE_URL" variable in frontend/constants.js file to "http://localhost:5000"
