@@ -1,4 +1,5 @@
-# Library Web App
+## MERN Library Project
+To run this locallY:
 1. Install npm (npm install) in the root folder and in frontend folder using the terminal.
 2. Change the values of example.env to suit your case and rename it to .env
 3. Change the value of "BASE_URL" variable in frontend/constants.js file to "http://localhost:5000"
@@ -16,4 +17,4 @@ Here are the Functional requirements of the project: "https://docs.google.com/do
 
 Here is the User manual of the Library Web App project: "https://docs.google.com/document/d/1ZUsYuaWVZw83oF78uoUUOH2bPDhtOCVS/edit?usp=sharing&ouid=104336841806813410427&rtpof=true&sd=true"
 
-The project is deployed on render at "https://librarywebapp-nlbi.onrender.com/"
+#The project is deployed on render at "https://librarywebapp-nlbi.onrender.com/"
