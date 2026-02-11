@@ -10,7 +10,7 @@
 .filter-container h2 {
     font-size: 1.8em;
     margin-bottom: 20px;
-    color: #333;
+    color: #b28888;
 }
 
 .filter-form {
@@ -30,7 +30,7 @@
 
 .filter-inputs label {
     font-weight: bold;
-    color: #333;
+    color: #c69797;
 }
 
 .filter-inputs select {
